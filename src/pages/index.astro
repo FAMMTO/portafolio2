@@ -1,0 +1,347 @@
+---
+import HeroCode from '../components/HeroCode.jsx';
+import Showcase from '../components/Showcase.jsx';
+import Works from '../components/Works.jsx';
+import ServicesDeck from '../components/ServicesDeck.jsx';
+import CareerModal from '../components/CareerModal.jsx';
+import { perfil, stack } from '../data.js';
+import { favicon } from '../favicon.js';
+import '../index.css';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{perfil.nombre} — {perfil.rol}</title>
+    <meta name="description" content={`Portafolio de ${perfil.nombre}, ${perfil.rol}. Aplicaciones web, APIs y despliegues en la nube.`} />
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+    <!-- Conexiones tempranas: fuentes y Supabase (datos + imágenes) se piden durante el telón -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href={import.meta.env.PUBLIC_SUPABASE_URL} crossorigin />
+    <!-- Telón de carga: el script de abajo lo retira cuando datos, imágenes y fuentes están listos.
+         Sin JS no se marca 'cargando' y corre la animación original; con JS, tope de 15s por seguridad. -->
+    <script is:inline>
+      document.documentElement.classList.add('cargando');
+      setTimeout(function () { document.documentElement.classList.remove('cargando'); }, 15000);
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <!-- NAV — isla flotante sobre fondo transparente -->
+      <nav class="nav">
+        <div id="nav-island" class="nav-island pre-enter">
+          <a href="#" class="nav-brand" aria-label={perfil.nombre}>
+            <span class="nav-logo-text"><b>{'<'}</b>{perfil.iniciales}<b>{'/>'}</b></span>
+          </a>
+          <div class="nav-links">
+            <a href="#proyectos">Proyectos</a>
+            <button type="button" class="nav-link-btn" data-abrir-carrera>Carrera</button>
+            <a href="#sobre-mi">Sobre mí</a>
+          </div>
+          <div class="nav-actions">
+            <a href={perfil.github} target="_blank" rel="noopener noreferrer" class="nav-ghost" data-perfil-github>GitHub</a>
+            <a href="#contacto" class="nav-cta">Contrátame</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- HERO — tarjeta oscura flotante con editor de código animado -->
+      <header class="hero">
+        <div class="intro-curtain">
+          <div class="intro-loader">
+            <div class="intro-icons" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5" /><path d="M16 7l5 5-5 5" /></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M7 9l3 3-3 3M12 15h5" /></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5" /><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" /></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 1 1 .9-9.9A6 6 0 0 1 19 10a4 4 0 0 1-1 8z" /></svg>
+            </div>
+            <div class="intro-progress" role="progressbar" aria-label="Cargando" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="intro-progress-bar"></div>
+            </div>
+            <span class="intro-pct" aria-hidden="true">0%</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <!-- Pestaña superior donde encaja la isla del nav (efecto notch) -->
+          <div class="hero-tab" aria-hidden="true"></div>
+          <div class="hero-media">
+            <HeroCode client:idle />
+            <div class="hero-content">
+              <div class="hero-badge">Frontend · Backend · APIs · Cloud</div>
+              <h1 class="hero-title">
+                Construyo aplicaciones web <em>de punta a punta</em>.
+              </h1>
+              <p class="hero-sub">
+                Soy {perfil.nombre}, {perfil.rol.toLowerCase()}. Diseño interfaces rápidas, APIs sólidas y las despliego en la nube, con código limpio y bien probado.
+              </p>
+              <div class="hero-actions">
+                <a href="#proyectos" class="btn-dark">Ver proyectos</a>
+                <a href="#contacto" class="btn-soft">Contacto</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- PROYECTOS DESTACADOS -->
+      <div id="proyectos">
+        <Showcase client:visible />
+      </div>
+
+      <!-- MOSAICO DE PROYECTOS -->
+      <Works client:visible />
+
+      <!-- SERVICIOS -->
+      <section id="servicios" class="services-section">
+        <div class="reveal services-head">
+          <span class="services-badge"><i class="services-dot"></i>LO QUE HAGO</span>
+          <h2 class="services-heading">Servicios</h2>
+        </div>
+        <ServicesDeck client:visible />
+        <div class="reveal services-cta">
+          <span class="services-cta-icon" aria-hidden="true">✦</span>
+          <span>¿Tienes una idea o un producto que escalar? <a href="#contacto">Hablemos.</a></span>
+          <span class="services-cta-arrow" aria-hidden="true">→</span>
+        </div>
+      </section>
+
+      <!-- SOBRE MÍ -->
+      <section id="sobre-mi" class="studio-section">
+        <div class="reveal studio-grid">
+          <div class="studio-copy">
+            <!-- Valores iniciales; se reemplazan con la tabla `perfil` (sobre_*) de Supabase (script abajo) -->
+            <h2 id="sobre-titulo">Del diseño de la base de datos al último píxel.</h2>
+            <p id="sobre-texto">
+              Trabajo en todo el ciclo: entiendo el problema de negocio, modelo los datos, construyo la API, la interfaz y la infraestructura. Me importan el rendimiento, la accesibilidad y el código que otros puedan mantener.
+            </p>
+            <ul class="stack-list" id="sobre-stack">
+              {stack.map((s) => <li>{s}</li>)}
+            </ul>
+          </div>
+          <div class="stats" id="sobre-stats">
+            <div class="stat">
+              <div class="stat-num">3+</div>
+              <div class="stat-label">Años programando</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">25+</div>
+              <div class="stat-label">Proyectos entregados</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">100%</div>
+              <div class="stat-label">Código en Git</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACTO -->
+      <section id="contacto" class="contact-section">
+        <div class="reveal contact-card">
+          <h2>¿Construimos algo juntos?</h2>
+          <p>Cuéntame sobre tu proyecto, vacante o idea. Respondo en menos de 24 horas.</p>
+          <!-- Correo y teléfono vienen de la tabla `perfil` de Supabase (script abajo); ocultos hasta tener valor -->
+          <div class="contact-actions">
+            <a id="contacto-correo" class="contact-cta" hidden>Escríbeme →</a>
+            <a id="contacto-whatsapp" class="contact-cta contact-cta--ghost" target="_blank" rel="noopener noreferrer" hidden>WhatsApp ↗</a>
+          </div>
+          <div class="contact-datos">
+            <a id="contacto-correo-texto" hidden></a>
+            <a id="contacto-telefono" hidden></a>
+          </div>
+        </div>
+        <footer class="footer">
+          <span>© 2026 {perfil.nombre}</span>
+          <div class="footer-links">
+            <a href={perfil.github} target="_blank" rel="noopener noreferrer" data-perfil-github>GitHub</a>
+            <a href={perfil.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </div>
+          <span>{perfil.ciudad}</span>
+        </footer>
+      </section>
+    </div>
+
+    <!-- Modal "Carrera" (tabla trayectoria); lo abre el botón del nav -->
+    <CareerModal client:idle />
+
+    <script>
+      import { urlSegura } from '../lib/url.js';
+      import { obtenerDatos, iniciarCarga } from '../lib/carga.js';
+
+      // TELÓN DE CARGA — se queda mientras llegan datos de Supabase, imágenes y fuentes; la barra
+      // muestra el avance real. Al terminar se quita 'cargando' y arranca la coreografía de entrada
+      // (título + telón). Al acabar el telón se emite 'intro-fin' (nav y editor del hero lo esperan).
+      const root = document.documentElement;
+      const barra = document.querySelector('.intro-progress-bar');
+      const pista = document.querySelector('.intro-progress');
+      const pct = document.querySelector('.intro-pct');
+      const telon = document.querySelector('.intro-curtain');
+      // Con JS la barra refleja el avance real (sin la animación CSS de tiempo fijo).
+      if (barra) { barra.style.animation = 'none'; barra.style.transition = 'width .35s ease'; }
+      let avance = 0;
+      const pintarAvance = (p) => {
+        avance = Math.max(avance, p); // nunca retrocede aunque se sumen tareas nuevas
+        const v = Math.round(avance * 100);
+        if (barra) barra.style.width = `${v}%`;
+        pista?.setAttribute('aria-valuenow', String(v));
+        if (pct) pct.textContent = `${v}%`;
+      };
+      const finIntro = () => {
+        if (window.__introFin) return;
+        window.__introFin = true;
+        window.dispatchEvent(new Event('intro-fin'));
+      };
+      iniciarCarga(pintarAvance).then(() => {
+        // Deja ver el 100% un instante antes de arrancar la entrada.
+        setTimeout(() => {
+          root.classList.remove('cargando');
+          telon?.addEventListener('animationend', (e) => { if (e.target === telon) finIntro(); }, { once: true });
+          setTimeout(finIntro, 3200); // respaldo por si animationend no llega
+        }, 250);
+      });
+
+      // CONTACTO — correo y teléfono desde la tabla `perfil` (fila única id=1). Se leen en vivo:
+      // al editarlos en Supabase se reflejan sin volver a publicar. Si están vacíos, no se muestran.
+      // CARRERA — el nav es HTML estático: avisa al modal (React) por evento. Si aún no hidrata,
+      // deja la bandera para que se abra en cuanto monte.
+      document.querySelectorAll('[data-abrir-carrera]').forEach((btn) =>
+        btn.addEventListener('click', () => {
+          window.__abrirCarrera = true;
+          window.dispatchEvent(new Event('abrir-carrera'));
+        })
+      );
+
+      obtenerDatos()
+        .then(({ perfil: data, proyectos, trayectoria }) => {
+          if (!data) return;
+          pintarSobreMi(data, proyectos, trayectoria);
+          const github = urlSegura(data?.github);
+          if (github) document.querySelectorAll('[data-perfil-github]').forEach((a) => { a.href = github; });
+          // Solo un correo simple (sin ?cc=, espacios, etc.) para armar el mailto:
+          const correoRaw = data?.correo?.trim();
+          const correo = /^[^\s@?&#]+@[^\s@?&#]+\.[^\s@?&#]+$/.test(correoRaw || '') ? correoRaw : null;
+          const telefono = data?.telefono?.trim();
+          const mostrar = (id, href, texto) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.href = href;
+            if (texto) el.textContent = texto;
+            el.hidden = false;
+          };
+          if (correo) {
+            mostrar('contacto-correo', `mailto:${correo}`);
+            mostrar('contacto-correo-texto', `mailto:${correo}`, correo);
+          }
+          if (telefono) {
+            const digitos = telefono.replace(/\D/g, '');
+            // Número mexicano de 10 dígitos sin lada internacional → +52 para tel: y WhatsApp.
+            const intl = digitos.length === 10 ? `52${digitos}` : digitos;
+            mostrar('contacto-telefono', `tel:+${intl}`, telefono);
+            mostrar('contacto-whatsapp', `https://wa.me/${intl}`);
+          }
+        });
+
+      // SOBRE MÍ — título, párrafo, stack y cifras desde `perfil`. Si un campo está vacío se deja el HTML inicial.
+      // Cifras con auto='anios' se calculan desde el primer puesto de `trayectoria`; 'proyectos' cuenta los publicados.
+      // Usa los datos de la carga central: sin consultas extra.
+      function pintarSobreMi(data, proyectos, trayectoria) {
+        const titulo = data?.sobre_titulo?.trim();
+        const texto = data?.sobre_texto?.trim();
+        if (titulo) document.getElementById('sobre-titulo').textContent = titulo;
+        if (texto) document.getElementById('sobre-texto').textContent = texto;
+
+        const stack = data?.sobre_stack;
+        if (Array.isArray(stack) && stack.length) {
+          document.getElementById('sobre-stack').replaceChildren(
+            ...stack.map((t) => Object.assign(document.createElement('li'), { textContent: t }))
+          );
+        }
+
+        const stats = data?.sobre_stats;
+        if (!Array.isArray(stats) || !stats.length) return;
+        const auto = {};
+        if (stats.some((s) => s.auto === 'anios')) {
+          // trayectoria viene de más reciente a más antiguo: la fecha mínima es la del primer puesto.
+          const inicio = (trayectoria || []).map((t) => t.fecha_inicio).sort()[0];
+          if (inicio) {
+            const anios = Math.floor((Date.now() - new Date(`${inicio}T00:00:00`)) / (365.25 * 864e5));
+            auto.anios = `${Math.max(anios, 1)}+`;
+          }
+        }
+        if (stats.some((s) => s.auto === 'proyectos') && proyectos) {
+          // RLS ya limita a publicados para el visitante; se filtra igual por si acaso.
+          auto.proyectos = `${proyectos.filter((p) => p.publicado !== false).length}+`;
+        }
+        const tarjetas = stats
+          .map((s) => ({ valor: (s.auto && auto[s.auto]) || s.valor, etiqueta: s.etiqueta }))
+          .filter((s) => s.valor && s.etiqueta)
+          .map((s) => {
+            const div = Object.assign(document.createElement('div'), { className: 'stat' });
+            div.append(
+              Object.assign(document.createElement('div'), { className: 'stat-num', textContent: s.valor }),
+              Object.assign(document.createElement('div'), { className: 'stat-label', textContent: s.etiqueta })
+            );
+            return div;
+          });
+        if (tarjetas.length) document.getElementById('sobre-stats').replaceChildren(...tarjetas);
+      }
+
+      // NAV — isla flotante: gana opacidad/sombra al hacer scroll, se guarda al bajar,
+      // reaparece al subir, y entra cuando termina la intro (telón retirado).
+      const island = document.getElementById('nav-island');
+      if (island) {
+        if (window.__introFin) island.classList.remove('pre-enter');
+        else window.addEventListener('intro-fin', () => island.classList.remove('pre-enter'), { once: true });
+
+        // El notch del hero (.hero-tab) toma el ancho real de la isla → sus curvas abrazan el nav.
+        const syncNavW = () => document.documentElement.style.setProperty('--nav-w', `${island.offsetWidth}px`);
+        syncNavW();
+        if ('ResizeObserver' in window) new ResizeObserver(syncNavW).observe(island);
+        document.fonts?.ready.then(syncNavW);
+
+        let lastY = window.scrollY;
+        const onScroll = () => {
+          const y = window.scrollY;
+          island.classList.toggle('scrolled', y > 24);
+          const delta = y - lastY;
+          if (y < 80) {
+            island.classList.remove('hidden'); // siempre visible arriba del todo
+          } else if (delta > 6) {
+            island.classList.add('hidden'); // bajando → guardar
+          } else if (delta < -6) {
+            island.classList.remove('hidden'); // subiendo → mostrar
+          }
+          lastY = y;
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      // REVEAL — fade + slide up la primera vez que cada bloque entra en el viewport.
+      const revealEls = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.2 }
+        );
+        revealEls.forEach((el) => io.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>
