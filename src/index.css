@@ -911,7 +911,7 @@ html:not(.cargando) .intro-pct { visibility: hidden; }
   /* TRABAJOS — filtros + masonry Pinterest de 2 columnas */
   .works-section { padding: 12px 12px 40px; }
   .works-shell { display: none; }           /* fuera el carrusel gigante */
-  .works-head { display: block; margin: 12px 0 20px; }
+  .services-head.works-head { display: block; margin: 12px 0 24px; }
   /* Masonry móvil → lista de tarjetas grandes, una por fila, con texto y flecha sobre la foto */
   .works-mobile { display: flex; flex-direction: column; gap: 16px; }
   .pin--m { width: 100%; aspect-ratio: 16 / 9; border-radius: 20px; box-shadow: 0 10px 28px rgba(28,27,25,.1); }
