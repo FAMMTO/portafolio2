@@ -301,7 +301,11 @@ import '../index.css';
         else window.addEventListener('intro-fin', () => island.classList.remove('pre-enter'), { once: true });
 
         // El notch del hero (.hero-tab) toma el ancho real de la isla → sus curvas abrazan el nav.
-        const syncNavW = () => document.documentElement.style.setProperty('--nav-w', `${island.offsetWidth}px`);
+        // --nav-h: alto real de la isla (en móvil ocupa 2 filas); el hero reserva ese espacio arriba.
+        const syncNavW = () => {
+          document.documentElement.style.setProperty('--nav-w', `${island.offsetWidth}px`);
+          document.documentElement.style.setProperty('--nav-h', `${island.offsetHeight}px`);
+        };
         syncNavW();
         if ('ResizeObserver' in window) new ResizeObserver(syncNavW).observe(island);
         document.fonts?.ready.then(syncNavW);

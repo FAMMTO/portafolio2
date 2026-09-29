@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { carouselBlocks, categorias } from '../data.js';
+import { carouselBlocks } from '../data.js';
 import ProjectModal from './ProjectModal.jsx';
 import CodeVisual from './CodeVisual.jsx';
 import { obtenerDatos } from '../lib/carga.js';
@@ -84,20 +83,6 @@ export default function Works() {
   const sectionRef = useRef(null);
   const [bloquesDb, setBloquesDb] = useState(null); // null → usa datos estáticos de data.js
   const [selected, setSelected] = useState(null); // pin abierto en el modal
-  const [filtro, setFiltro] = useState('TODOS'); // filtro de categoría (solo móvil)
-  const [menuAbierto, setMenuAbierto] = useState(false); // dropdown del ☰ (solo móvil)
-  const filtersRef = useRef(null);
-
-  // Cierra el dropdown al tocar fuera de la barra de filtros.
-  useEffect(() => {
-    if (!menuAbierto) return;
-    const onDocClick = (e) => {
-      if (filtersRef.current && !filtersRef.current.contains(e.target)) setMenuAbierto(false);
-    };
-    document.addEventListener('pointerdown', onDocClick);
-    return () => document.removeEventListener('pointerdown', onDocClick);
-  }, [menuAbierto]);
-
   // Proyectos de la carga central (ya precargados junto con sus imágenes durante el telón);
   // si falla o la tabla está vacía se quedan los estáticos.
   useEffect(() => {
@@ -157,7 +142,6 @@ export default function Works() {
       ))}
     </div>
   );
-  const pinsFiltrados = filtro === 'TODOS' ? pinsPlanos : pinsPlanos.filter((p) => p.tag === filtro);
 
   return (
     <section id="trabajos" className="works-section" ref={sectionRef}>
@@ -171,56 +155,15 @@ export default function Works() {
         </div>
       </div>
 
-      {/* Filtros de categoría (solo móvil) */}
-      <div className="works-filters" ref={filtersRef}>
-        <div className="works-filters-scroll">
-          {categorias.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              className={`works-filter${filtro === cat ? ' active' : ''}`}
-              onClick={() => setFiltro(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          className={`works-filters-menu${menuAbierto ? ' active' : ''}`}
-          aria-label="Ver todas las categorías"
-          aria-expanded={menuAbierto}
-          onClick={() => setMenuAbierto((v) => !v)}
-        >
-          ☰
-        </button>
-        <AnimatePresence>
-          {menuAbierto && (
-            <motion.div
-              className="works-filters-dropdown"
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.97 }}
-              transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
-            >
-              {categorias.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  className={`works-filters-dropdown-item${filtro === cat ? ' active' : ''}`}
-                  onClick={() => { setFiltro(cat); setMenuAbierto(false); }}
-                >
-                  {cat}
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Encabezado de sección (solo móvil), mismo estilo que "Servicios" */}
+      <div className="services-head works-head">
+        <span className="services-badge"><i className="services-dot" />PORTAFOLIO</span>
+        <h2 className="services-heading">Proyectos</h2>
       </div>
 
       {/* Masonry vertical para móvil (Pinterest) */}
       <div className="works-mobile">
-        {pinsFiltrados.map((p, i) => (
+        {pinsPlanos.map((p, i) => (
           <button type="button" key={i} className="pin pin--m" onClick={() => setSelected(p)}>
             <PinMedia p={p} className="pin-media pin-media--m" />
             <div className="pin-body">

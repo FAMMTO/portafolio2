@@ -95,9 +95,6 @@ export const carouselBlocks = [
   },
 ];
 
-// Categorías de filtros (móvil).
-export const categorias = ['TODOS', 'FRONTEND', 'BACKEND', 'FULLSTACK', 'DEVOPS'];
-
 // tema: 'dark' | 'light'. acento: color de la 2ª palabra, número e icono. icono: 'web'|'api'|'cloud'|'mcp'|'agent'.
 export const servicios = [
   { num: '01', tema: 'dark',  acento: '#9CC5A3', icono: 'web',   titulo1: 'Desarrollo', titulo2: 'Frontend', desc: 'Interfaces rápidas, accesibles y responsivas con React, Next.js y Astro. Animaciones cuidadas y rendimiento medible.', visual: 'ui', archivo: 'frontend.app' },
