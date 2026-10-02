@@ -116,6 +116,16 @@ export default function ProjectModal({ pin, onClose }) {
   const tapInfo = useRef(null); // { time, x, y } del pointerdown, para detectar doble tap en touch
   const lastTap = useRef({ time: 0, x: 0, y: 0 });
 
+  // touch-action de la imagen: sin zoom deja hacer scroll vertical con el dedo (en móvil todo el modal
+  // hace scroll); con zoom el dedo mueve la imagen ampliada. El swipe horizontal funciona en ambos casos.
+  useEffect(() => {
+    const aplicar = (z) => {
+      if (mediaBoxRef.current) mediaBoxRef.current.style.touchAction = z > 1.01 ? 'none' : 'pan-y';
+    };
+    aplicar(zoom.get());
+    return zoom.on('change', aplicar);
+  }, [pin, zoom]);
+
   const resetZoom = () => { animate(zoom, 1, { duration: 0.25 }); animate(panX, 0, { duration: 0.25 }); animate(panY, 0, { duration: 0.25 }); };
   const toggleZoom = () => {
     if (zoom.get() > 1) resetZoom();
@@ -289,7 +299,7 @@ export default function ProjectModal({ pin, onClose }) {
                   onPointerCancel={endDrag}
                   onWheel={onMediaWheel}
                   // El marco toma la proporción real de la imagen activa: el modal se ajusta a ella.
-                  style={{ touchAction: 'none', '--r': (activa && imgRatios[activa]) || 16 / 9 }}
+                  style={{ touchAction: 'pan-y', '--r': (activa && imgRatios[activa]) || 16 / 9 }}
                 >
                   {activa ? (
                     <>
