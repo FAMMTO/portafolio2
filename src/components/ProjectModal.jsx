@@ -170,6 +170,52 @@ export default function ProjectModal({ pin, onClose }) {
     else springBack();
   };
 
+  // Swipe táctil con bloqueo de dirección: los primeros ~8px deciden. Horizontal → se cambia de foto
+  // y se bloquea el scroll (preventDefault); vertical → se deja al navegador hacer scroll del modal.
+  // Listeners nativos con passive:false (React no permite preventDefault en touchmove).
+  const settleRef = useRef(settle);
+  settleRef.current = settle;
+  const puedeSwipeRef = useRef(false);
+  puedeSwipeRef.current = galeria.length > 1;
+  useEffect(() => {
+    const el = mediaBoxRef.current;
+    if (!el) return;
+    let ini = null; // { x, y, val, dir: null | 'h' | 'v' }
+    const onStart = (e) => {
+      if (e.touches.length !== 1 || zoom.get() > 1.01 || !puedeSwipeRef.current || committing.current) { ini = null; return; }
+      const t = e.touches[0];
+      ini = { x: t.clientX, y: t.clientY, val: x.get(), dir: null };
+    };
+    const onMove = (e) => {
+      if (!ini) return;
+      if (e.touches.length !== 1) { ini = null; return; } // segundo dedo → pellizco, no swipe
+      const t = e.touches[0];
+      const dx = t.clientX - ini.x, dy = t.clientY - ini.y;
+      if (!ini.dir) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        ini.dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      }
+      if (ini.dir !== 'h') return;
+      e.preventDefault();
+      const ancho = el.offsetWidth;
+      x.set(Math.max(-ancho, Math.min(ancho, ini.val + dx)));
+    };
+    const onEnd = () => {
+      if (ini?.dir === 'h') settleRef.current();
+      ini = null;
+    };
+    el.addEventListener('touchstart', onStart, { passive: true });
+    el.addEventListener('touchmove', onMove, { passive: false });
+    el.addEventListener('touchend', onEnd);
+    el.addEventListener('touchcancel', onEnd);
+    return () => {
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+      el.removeEventListener('touchcancel', onEnd);
+    };
+  }, [pin, x, zoom]);
+
   const onMediaPointerDown = (e) => {
     e.currentTarget.setPointerCapture?.(e.pointerId);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -190,6 +236,9 @@ export default function ProjectModal({ pin, onClose }) {
       return;
     }
     if (galeria.length < 2 || committing.current) return;
+    // El swipe con el dedo lo manejan los eventos táctiles de abajo (bloqueo de dirección);
+    // aquí solo mouse/lápiz, porque en móvil el navegador cancela el puntero al detectar scroll.
+    if (e.pointerType === 'touch') return;
     dragState.current = { startX: e.clientX, startVal: x.get(), active: true };
   };
   const onMediaPointerMove = (e) => {
